@@ -1,0 +1,19 @@
+# НЕБЕЗОПАСНЫЙ МАНИФЕСТ - для демонстрации нарушений политики
+# Нарушение: контейнер запускается от root (UID 0)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-root-user
+  namespace: audit-zone
+  labels:
+    app: insecure-root
+    security-violation: root-user
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.25-alpine
+      securityContext:
+        runAsUser: 0  # НАРУШЕНИЕ: запуск от root (UID 0)
+        runAsNonRoot: false  # НАРУШЕНИЕ: явное разрешение root
+      ports:
+        - containerPort: 80

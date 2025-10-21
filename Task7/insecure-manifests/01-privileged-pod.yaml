@@ -1,0 +1,18 @@
+# НЕБЕЗОПАСНЫЙ МАНИФЕСТ - для демонстрации нарушений политики
+# Нарушение: privileged: true позволяет контейнеру получить полный доступ к хосту
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-privileged
+  namespace: audit-zone
+  labels:
+    app: insecure-privileged
+    security-violation: privileged-mode
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.25-alpine
+      securityContext:
+        privileged: true  # НАРУШЕНИЕ: контейнер имеет полный доступ к хосту
+      ports:
+        - containerPort: 80

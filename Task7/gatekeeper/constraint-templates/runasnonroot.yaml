@@ -1,0 +1,66 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spsprunasnonroot
+  annotations:
+    description: "Требует установки runAsNonRoot: true для всех контейнеров"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPRunAsNonRoot
+      validation:
+        openAPIV3Schema:
+          type: object
+          description: "Требует runAsNonRoot: true"
+
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spsprunasnonroot
+
+        violation[{"msg": msg, "details": {}}] {
+          c := input_containers[_]
+          not input_run_as_non_root(c)
+          msg := sprintf("Контейнер %v должен иметь runAsNonRoot: true", [c.name])
+        }
+
+        violation[{"msg": msg, "details": {}}] {
+          c := input_containers[_]
+          input_run_as_root(c)
+          msg := sprintf("Контейнер %v использует runAsUser: 0 (root)", [c.name])
+        }
+
+        input_run_as_non_root(c) {
+          c.securityContext.runAsNonRoot
+        }
+
+        input_run_as_non_root(c) {
+          not has_field(c, "securityContext")
+          input.review.object.spec.securityContext.runAsNonRoot
+        }
+
+        input_run_as_root(c) {
+          c.securityContext.runAsUser == 0
+        }
+
+        input_run_as_root(c) {
+          not has_field(c, "securityContext")
+          input.review.object.spec.securityContext.runAsUser == 0
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.ephemeralContainers[_]
+        }
+
+        has_field(obj, field) {
+          obj[field]
+        }

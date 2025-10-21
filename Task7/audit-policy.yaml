@@ -1,0 +1,128 @@
+apiVersion: audit.k8s.io/v1
+kind: Policy
+metadata:
+  name: container-security-audit-policy
+rules:
+  # Логирование всех попыток создания/изменения подов с нарушениями политик
+  - level: RequestResponse
+    verbs: ["create", "update", "patch"]
+    resources:
+      - group: ""
+        resources: ["pods"]
+    namespaces: ["audit-zone", "sales-domain", "tenant-domain", "finance-domain", "data-domain"]
+    omitStages:
+      - RequestReceived
+
+  # Логирование изменений PodSecurity конфигурации namespace
+  - level: RequestResponse
+    verbs: ["create", "update", "patch", "delete"]
+    resources:
+      - group: ""
+        resources: ["namespaces"]
+    omitStages:
+      - RequestReceived
+
+  # Логирование всех действий с Gatekeeper ConstraintTemplates
+  - level: RequestResponse
+    verbs: ["create", "update", "patch", "delete"]
+    resources:
+      - group: "templates.gatekeeper.sh"
+        resources: ["constrainttemplates"]
+    omitStages:
+      - RequestReceived
+
+  # Логирование всех действий с Gatekeeper Constraints
+  - level: RequestResponse
+    verbs: ["create", "update", "patch", "delete"]
+    resources:
+      - group: "constraints.gatekeeper.sh"
+        resources: ["*"]
+    omitStages:
+      - RequestReceived
+
+  # Логирование попыток создания privileged контейнеров
+  - level: RequestResponse
+    verbs: ["create", "update", "patch"]
+    resources:
+      - group: ""
+        resources: ["pods"]
+      - group: "apps"
+        resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+    omitStages:
+      - RequestReceived
+
+  # Логирование создания/изменения SecurityContext
+  - level: Request
+    verbs: ["create", "update", "patch"]
+    resources:
+      - group: ""
+        resources: ["pods"]
+      - group: "apps"
+        resources: ["deployments", "statefulsets", "daemonsets"]
+    omitStages:
+      - RequestReceived
+      - ResponseStarted
+      - ResponseComplete
+
+  # Логирование попыток создания ServiceAccounts
+  - level: Metadata
+    verbs: ["create", "update", "patch", "delete"]
+    resources:
+      - group: ""
+        resources: ["serviceaccounts"]
+    omitStages:
+      - RequestReceived
+
+  # Логирование отклонённых запросов (нарушения политик)
+  - level: RequestResponse
+    omitStages:
+      - RequestReceived
+    namespaces: ["audit-zone", "sales-domain", "tenant-domain", "finance-domain", "data-domain"]
+    verbs: ["create", "update", "patch"]
+
+  # Логирование authentication/authorization failures
+  - level: Metadata
+    omitStages:
+      - RequestReceived
+
+  # Не логировать read-only и watch операции для снижения нагрузки
+  - level: None
+    verbs: ["get", "list", "watch"]
+
+  # Не логировать health checks
+  - level: None
+    users: ["system:kube-proxy"]
+    verbs: ["watch"]
+    resources:
+      - group: ""
+        resources: ["endpoints", "services", "services/status"]
+
+  - level: None
+    userGroups: ["system:nodes"]
+    verbs: ["get"]
+    resources:
+      - group: ""
+        resources: ["nodes", "nodes/status"]
+
+  # Не логировать internal system components
+  - level: None
+    users:
+      - "system:kube-controller-manager"
+      - "system:kube-scheduler"
+      - "system:serviceaccount:kube-system:endpoint-controller"
+    verbs: ["get", "update"]
+    namespaces: ["kube-system"]
+    resources:
+      - group: ""
+        resources: ["endpoints"]
+
+  # Не логировать DNS lookups
+  - level: None
+    resources:
+      - group: ""
+        resources: ["services/status"]
+
+  # Default: логировать метаданные для всех остальных запросов
+  - level: Metadata
+    omitStages:
+      - RequestReceived

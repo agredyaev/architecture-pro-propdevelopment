@@ -1,0 +1,42 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spspreadonlyrootfilesystem
+  annotations:
+    description: "Требует установки readOnlyRootFilesystem: true для всех контейнеров"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPReadOnlyRootFilesystem
+      validation:
+        openAPIV3Schema:
+          type: object
+          description: "Требует readOnlyRootFilesystem: true"
+
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spspreadonlyrootfilesystem
+
+        violation[{"msg": msg, "details": {}}] {
+          c := input_containers[_]
+          not input_read_only_root_fs(c)
+          msg := sprintf("Контейнер %v должен иметь readOnlyRootFilesystem: true", [c.name])
+        }
+
+        input_read_only_root_fs(c) {
+          c.securityContext.readOnlyRootFilesystem == true
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.ephemeralContainers[_]
+        }

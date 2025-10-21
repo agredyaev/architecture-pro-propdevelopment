@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: audit-zone
+  labels:
+    # PodSecurity Admission labels для Kubernetes 1.23+
+    # enforce: блокирует поды, не соответствующие политике
+    # audit: логирует нарушения в audit log
+    # warn: показывает предупреждения в kubectl
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: latest
+
+    # Метки для идентификации
+    environment: security-audit
+    purpose: container-security-validation
