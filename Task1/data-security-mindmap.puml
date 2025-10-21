@@ -1,0 +1,228 @@
+@startmindmap
+skinparam dpi 144
+skinparam defaultFontName "Inter, SF Pro Display, -apple-system, system-ui, sans-serif"
+skinparam defaultMonospacedFontName "JetBrains Mono, Menlo, Consolas, monospace"
+
+<style>
+mindmapDiagram {
+  BackgroundColor #020617
+  
+  node {
+    BackgroundColor #1e293b
+    LineColor #334155
+    LineThickness 2.5
+    FontColor #f1f5f9
+    FontSize 13
+    FontName "Inter, -apple-system, system-ui, sans-serif"
+    Padding 14
+    Margin 10
+    RoundCorner 10
+    MaximumWidth 280
+  }
+  
+  :depth(0) {
+    BackgroundColor #4f46e5
+    LineColor #6366f1
+    LineThickness 3.5
+    FontColor #ffffff
+    FontSize 18
+    FontStyle bold
+    FontName "Inter, SF Pro Display, -apple-system, system-ui, sans-serif"
+    Padding 20
+    Margin 16
+    RoundCorner 14
+    MaximumWidth 320
+  }
+  
+  :depth(1) {
+    BackgroundColor #1e293b
+    LineColor #6366f1
+    LineThickness 3
+    FontColor #f1f5f9
+    FontSize 15
+    FontStyle bold
+    FontName "Inter, -apple-system, system-ui, sans-serif"
+    Padding 16
+    Margin 12
+    RoundCorner 12
+    MaximumWidth 300
+  }
+  
+  :depth(2) {
+    BackgroundColor #0f172a
+    LineColor #475569
+    LineThickness 2.5
+    FontColor #f1f5f9
+    FontSize 13
+    FontName "Inter, -apple-system, system-ui, sans-serif"
+    Padding 14
+    Margin 10
+    RoundCorner 10
+    MaximumWidth 280
+  }
+  
+  :depth(3) {
+    BackgroundColor #0f172a
+    LineColor #334155
+    LineThickness 2
+    FontColor #cbd5e1
+    FontSize 12
+    FontName "Inter, -apple-system, system-ui, sans-serif"
+    Padding 12
+    Margin 8
+    RoundCorner 8
+    MaximumWidth 260
+  }
+  
+  :depth(4) {
+    BackgroundColor transparent
+    LineColor transparent
+    FontColor #94a3b8
+    FontSize 11
+    FontName "Inter, -apple-system, system-ui, sans-serif"
+    Padding 10
+    Margin 6
+    MaximumWidth 240
+  }
+  
+  .public {
+    BackgroundColor #34d399
+    LineColor #5eead4
+    LineThickness 2.5
+    FontColor #0f172a
+    FontStyle bold
+  }
+  
+  .internal {
+    BackgroundColor #22d3ee
+    LineColor #38bdf8
+    LineThickness 2.5
+    FontColor #0f172a
+    FontStyle bold
+  }
+  
+  .confidential {
+    BackgroundColor #fb923c
+    LineColor #fdba74
+    LineThickness 2.5
+    FontColor #0f172a
+    FontStyle bold
+  }
+  
+  .secret {
+    BackgroundColor #f472b6
+    LineColor #fb7185
+    LineThickness 2.5
+    FontColor #f1f5f9
+    FontStyle bold
+  }
+  
+  .risk_minor {
+    BackgroundColor #34d399
+    LineColor #5eead4
+    FontColor #0f172a
+  }
+  
+  .risk_significant {
+    BackgroundColor #fbbf24
+    LineColor #fcd34d
+    FontColor #451a03
+  }
+  
+  .risk_critical {
+    BackgroundColor #f43f5e
+    LineColor #fb7185
+    FontColor #f1f5f9
+    FontStyle bold
+  }
+  
+  leafNode {
+    LineColor transparent
+    BackgroundColor transparent
+    FontColor #94a3b8
+    Padding 8
+    Margin 6
+  }
+  
+  arrow {
+    LineColor #475569
+    LineThickness 2.5
+  }
+  
+  legend {
+    BackgroundColor #1e293b
+    LineColor #475569
+    LineThickness 2
+    FontColor #f1f5f9
+    FontSize 13
+    Padding 16
+    Margin 12
+  }
+}
+</style>
+
+* **Безопасность данных\nPropDevelopment**
+
+left side
+
+**[#34d399] ПУБЛИЧНЫЕ ДАННЫЕ <<public>>
+***[#0f172a] Данные витрины недвижимости
+**** Планировки квартир
+**** Цены на недвижимость
+**** Фото жилых комплексов
+***[#fbbf24] РИСК: Искажение\n[ЗНАЧИТЕЛЬНЫЙ] <<risk_significant>>
+****_ **Обоснование:**\nНесанкционированное изменение\nцен/планировок приводит к\nрепутационному ущербу,\nнедоверию клиентов
+
+**[#22d3ee] ВНУТРЕННИЕ ДАННЫЕ <<internal>>
+***[#0f172a] Операционные данные компании
+**** Статус продаж недвижимости
+**** Технические логи (без ПДн)
+**** Метрики системы
+**** Данные о ремонтах
+***[#fbbf24] РИСК: Утечка\n[ЗНАЧИТЕЛЬНЫЙ] <<risk_significant>>
+****_ **Обоснование:**\nКонкуренты узнают метрики продаж\n→ потеря конкурентных преимуществ
+***[#fbbf24] РИСК: Некачественные данные\n[ЗНАЧИТЕЛЬНЫЙ] <<risk_significant>>
+****_ **Обоснование:**\nНеправильные метрики приводят к\nошибочным бизнес-решениям,\nневозможности построения\nBI/ML/AI продуктов
+***[#34d399] РИСК: Обесценивание\n[НЕЗНАЧИТЕЛЬНЫЙ] <<risk_minor>>
+****_ **Обоснование:**\nУстаревшие метрики и логи\nтеряют актуальность со временем,\nно критического влияния на\nтекущие операции не оказывают
+
+right side
+
+**[#fb923c] КОНФИДЕНЦИАЛЬНЫЕ ДАННЫЕ <<confidential>>
+***[#0f172a] Бизнес-критичные данные
+**** Финансовые отчёты компании
+**** Данные о бронированиях
+**** Бизнес-метрики
+**** Внутренние комментарии о сделках
+***[#f43f5e] РИСК: Утечка\n[КРИТИЧЕСКИЙ] <<risk_critical>>
+****_ **Обоснование:**\nУтечка финансовых отчётов\nконкурентам → потеря конкурентных\nпреимуществ, коммерческой тайны
+***[#f43f5e] РИСК: Искажение\n[КРИТИЧЕСКИЙ] <<risk_critical>>
+****_ **Обоснование:**\nИскажение бухгалтерских данных\n→ штрафы налоговой,\nневерная отчётность
+
+**[#f472b6] СЕКРЕТНЫЕ ДАННЫЕ (ПДн) <<secret>>
+***[#0f172a] Персональные данные клиентов/собственников
+**** ПДн клиентов:\nФИО, телефон, email,\nпаспортные данные
+**** ПДн собственников
+**** Финансовые данные:\nплатежи ЖКУ
+**** Данные онлайн-сделок\nс госорганами
+**** Данные "Умного дома":\nуправление замками
+***[#f43f5e] РИСК: Утечка\n[КРИТИЧЕСКИЙ] <<risk_critical>>
+****_ **Обоснование:**\n• Нарушение 152-ФЗ\n  (штрафы до 6% оборота)\n• Репутационный ущерб\n• Потеря доверия клиентов
+***[#f43f5e] РИСК: Искажение\n[КРИТИЧЕСКИЙ] <<risk_critical>>
+****_ **Обоснование:**\n• Клиенты видят данные\n  других клиентов → жалобы,\n  нарушение 152-ФЗ\n• Партнёр УК-А изменяет\n  платежи УК-Б\n  → финансовые потери
+***[#f43f5e] РИСК: Потеря\n[КРИТИЧЕСКИЙ] <<risk_critical>>
+****_ **Обоснование:**\n• Невозможность восстановить\n  онлайн-сделки с госорганами\n• Штрафы 152-ФЗ за утрату ПДн\n• Потеря критичных данных:\n  платежи ЖКУ
+
+legend right
+<#1e293b,#1e293b>|= <color:#f1f5f9>**Категория**</color> |= <color:#f1f5f9>**Цвет**</color> |
+|<color:#f1f5f9> Публичные данные</color> | <back:#34d399>     </back> |
+|<color:#f1f5f9> Внутренние данные</color> | <back:#22d3ee>     </back> |
+|<color:#f1f5f9> Конфиденциальные</color> | <back:#fb923c>     </back> |
+|<color:#f1f5f9> Секретные (ПДн)</color> | <back:#f472b6>     </back> |
+|= <color:#f1f5f9>**Оценка риска**</color> |= <color:#f1f5f9>**Цвет**</color> |
+|<color:#f1f5f9> Незначительный</color> | <back:#34d399>     </back> |
+|<color:#f1f5f9> Значительный</color> | <back:#fbbf24>     </back> |
+|<color:#f1f5f9> Критический</color> | <back:#f43f5e>     </back> |
+endlegend
+
+@endmindmap
