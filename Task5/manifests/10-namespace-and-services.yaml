@@ -1,0 +1,114 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-network-policies
+  labels:
+    name: demo-network-policies
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: front-end-app
+  namespace: demo-network-policies
+  labels:
+    role: front-end
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.27-alpine
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-end-app
+  namespace: demo-network-policies
+spec:
+  selector:
+    role: front-end
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: back-end-api-app
+  namespace: demo-network-policies
+  labels:
+    role: back-end-api
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.27-alpine
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-end-api-app
+  namespace: demo-network-policies
+spec:
+  selector:
+    role: back-end-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-front-end-app
+  namespace: demo-network-policies
+  labels:
+    role: admin-front-end
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.27-alpine
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-front-end-app
+  namespace: demo-network-policies
+spec:
+  selector:
+    role: admin-front-end
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-back-end-api-app
+  namespace: demo-network-policies
+  labels:
+    role: admin-back-end-api
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.27-alpine
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-back-end-api-app
+  namespace: demo-network-policies
+spec:
+  selector:
+    role: admin-back-end-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

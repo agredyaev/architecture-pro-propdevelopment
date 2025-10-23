@@ -1,0 +1,79 @@
+@startuml C4_Container
+
+!pragma layout smetana
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include p3-c4-styles.puml
+
+left to right direction
+skinparam nodesep 30
+skinparam ranksep 25
+
+title Диаграмма контейнеров C4: PropDevelopment с интеграцией "Умный дом"
+
+Person(owner, "Собственник", "Владелец жилья")
+
+Boundary(propdevelopment, "PropDevelopment IT Landscape") {
+
+    together {
+        Container_Boundary(tenant_services, "Домен ЖКУ (Услуги для собственников)") {
+            Container(tenant_mobile, "Tenant Mobile App", "iOS/Android, Swift/Kotlin", "Мобильное приложение собственника.\nУправление ЖКУ, Умным домом, доступом.")
+            Container(tenant_core, "tenant-core-app", "Java Spring Boot", "Сервис предоставления услуг собственникам.\nОплата ЖКУ, информация о доме, ремонтах.")
+            ContainerDb(tenant_db, "Tenant Core DB", "PostgreSQL", "Данные собственников, ЖКУ, ремонтов")
+
+            Container(tenant_crm, "Tenant CRM", "Java Spring Boot", "Управление данными собственников")
+            ContainerDb(tenant_crm_db, "Tenant CRM DB", "PostgreSQL", "Профили собственников, контакты")
+        }
+
+        System_Boundary(smart_home_services, "Домен ЖКУ: Подсистема 'Умный дом' [НОВОЕ]") {
+            Container(api_gateway, "API Gateway", "Kong/NGINX + Lua", "Единая точка входа для внешних API.\nОAuth 2.0, JWT, Rate Limiting, Tenant Isolation.\nЗащита от несанкционированного доступа партнёров.")
+
+            Container(smart_home_service, "Smart Home Integration Service", "Python FastAPI", "Микросервис интеграции с платформой партнёра.\n- Управление домофонами/шлагбаумами\n- Обработка событий устройств\n- Управление списками доступа\n- Аудит операций")
+
+            ContainerDb(smart_home_db, "Smart Home DB", "PostgreSQL + pgcrypto", "Настройки доступа (encrypted):\n- Биометрические шаблоны (хеши лиц)\n- Списки гос. номеров автомобилей\n- Лог событий доступа\n- Привязка устройств к ЖК/собственникам")
+        }
+    }
+
+    together {
+        Container_Boundary(data_services, "Домен Дата") {
+            Container(audit_log, "Audit Log Service", "Elasticsearch + Logstash", "Централизованный сбор логов безопасности.\nАудит доступа к биометрии, событий устройств.")
+        }
+
+        Container_Boundary(security, "Инфраструктура безопасности") {
+            Container(firewall, "Firewall", "iptables/pfSense", "Межсетевой экран.\nФильтрация внешнего трафика.")
+        }
+    }
+}
+
+System_Ext(smart_home_platform, "Платформа партнёра 'Умный дом'", "Внешняя SaaS платформа.\nAPI управления устройствами:\n- Домофоны (видео, биометрия)\n- Шлагбаумы (распознавание номеров)")
+
+System_Ext(smart_devices, "Устройства на территории ЖК", "Интеллектуальные домофоны и шлагбаумы.\nПодключены к платформе партнёра.")
+
+Rel(owner, tenant_mobile, "Управляет доступом, настраивает списки", "HTTPS, JWT")
+
+Rel(tenant_mobile, api_gateway, "API запросы управления Умным домом", "HTTPS, REST API, JWT")
+Rel(tenant_mobile, tenant_core, "Запросы ЖКУ, информация о доме", "HTTPS, REST API, JWT")
+
+Rel(api_gateway, smart_home_service, "Проксирует запросы после валидации токена и tenant isolation", "HTTP, JSON")
+
+Rel(smart_home_service, smart_home_db, "Читает/пишет настройки доступа, логи событий", "SQL, TLS")
+Rel(smart_home_service, smart_home_platform, "Управляет устройствами, получает события", "HTTPS, REST API, OAuth 2.0 Client Credentials")
+
+Rel(smart_home_service, audit_log, "Отправляет события безопасности (доступ к биометрии, открытие дверей)", "Syslog/JSON, TLS")
+Rel(api_gateway, audit_log, "Логирует все внешние запросы, неудачные попытки авторизации", "Syslog/JSON, TLS")
+
+Rel(smart_home_service, tenant_crm, "Проверяет принадлежность собственника к ЖК", "HTTP, REST API, JWT")
+
+Rel(smart_home_platform, smart_devices, "Управляет, получает видео/события", "MQTT/HTTPS, TLS")
+
+Rel(firewall, api_gateway, "Пропускает HTTPS трафик от мобильных приложений", "HTTPS")
+Rel(smart_home_platform, firewall, "Webhook события от устройств (optional)", "HTTPS")
+
+Lay_Right(tenant_mobile, tenant_core)
+Lay_Right(tenant_core, tenant_crm)
+Lay_Down(tenant_mobile, tenant_db)
+Lay_Down(tenant_crm, tenant_crm_db)
+Lay_Down(api_gateway, smart_home_service)
+Lay_Down(smart_home_service, smart_home_db)
+Lay_Up(firewall, api_gateway)
+
+@enduml

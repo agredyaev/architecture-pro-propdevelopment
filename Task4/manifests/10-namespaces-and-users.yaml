@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sales
+  labels:
+    domain: sales
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-services
+  labels:
+    domain: tenant-services
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: finance
+  labels:
+    domain: finance
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: data
+  labels:
+    domain: data
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: security-admin
+  namespace: default
+  labels:
+    group: security-admins
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: business-viewer
+  namespace: default
+  labels:
+    group: business-viewers
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: devops-sales
+  namespace: sales
+  labels:
+    group: devops-engineers
+    domain: sales
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: devops-tenant
+  namespace: tenant-services
+  labels:
+    group: devops-engineers
+    domain: tenant-services
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: devops-finance
+  namespace: finance
+  labels:
+    group: devops-engineers
+    domain: finance
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: devops-data
+  namespace: data
+  labels:
+    group: devops-engineers
+    domain: data
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: developer-sales
+  namespace: sales
+  labels:
+    group: developers
+    domain: sales
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: developer-tenant
+  namespace: tenant-services
+  labels:
+    group: developers
+    domain: tenant-services
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: developer-finance
+  namespace: finance
+  labels:
+    group: developers
+    domain: finance
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: developer-data
+  namespace: data
+  labels:
+    group: developers
+    domain: data
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sre-sales
+  namespace: sales
+  labels:
+    group: sre-engineers
+    domain: sales
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sre-tenant
+  namespace: tenant-services
+  labels:
+    group: sre-engineers
+    domain: tenant-services
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sre-finance
+  namespace: finance
+  labels:
+    group: sre-engineers
+    domain: finance
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sre-data
+  namespace: data
+  labels:
+    group: sre-engineers
+    domain: data
